@@ -11,6 +11,16 @@
 ;; spaces, like this:
 (s/split "test string" #" ")
 
+(defn split-on-space
+  [str]
+  (s/split str #" "))
+
 (defn total-words
   [x]
-  )
+  (if (s/blank? x) 0
+      (count (split-on-space x))))
+
+;; test cases
+(total-words "this is words long")
+(total-words "now it is five words")
+(total-words "")

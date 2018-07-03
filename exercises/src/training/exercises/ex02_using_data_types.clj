@@ -86,6 +86,11 @@ training.exercises.ex02-using-data-types/failed-protagonist-names
 ;; You try:
 ;; * Use def, then use let to 'shadow' the def'd symbol
 
+(def cool-names ["Sarah" "Anna" "Lena" "Helen"])
+(last cool-names)
+
+(let [cool-names ["Bob" "Joe"]]
+  (last cool-names))
 
 
 ;; ========================================
@@ -99,7 +104,8 @@ training.exercises.ex02-using-data-types/failed-protagonist-names
 ;; * Add 5 numbers
 ;; * Multiply 3 numbers
 
-
+(+ 10 6 56 7 30)
+(* 10 8 9)
 
 ;; ========================================
 ;; Strings
@@ -110,7 +116,7 @@ training.exercises.ex02-using-data-types/failed-protagonist-names
 ;; You try:
 ;; * upper-case a line from your favorite song
 
-
+(str/upper-case "I hate Winnpipeg")
 
 ;; ========================================
 ;; Keywords
@@ -165,7 +171,11 @@ training.exercises.ex02-using-data-types/failed-protagonist-names
 ;; * Use get-in to get just the first name
 ;; * Use assoc-in to 'change' the first name
 
-
+(def name {:first "Tina" :last "Binina"})
+(def info {:name name})
+(get info :name)
+(get-in info [:name :first])
+(assoc-in info [:name :first] "Tinamcious")
 
 ;; ========================================
 ;; Vectors
@@ -187,18 +197,23 @@ training.exercises.ex02-using-data-types/failed-protagonist-names
 ;; Try these functions:
 ;; * first
 ;; * rest
-;; * take 
+;; * take
 ;; * assoc
 ;; * nth
 
-
+(def my-buddy [2 25 6 89 :tiger :kitten])
+(first my-buddy)
+(rest my-buddy)
+(take 4 my-buddy)
+(assoc my-buddy 2 :the-key)
+(nth my-buddy 4)
 
 ;; ========================================
 ;; Exercise: Points
 ;; ========================================
 ;; * Represent a point on plane
 
-
+(def point {:x 0 :y 0})
 
 ;; ========================================
 ;; Lists
@@ -217,6 +232,11 @@ training.exercises.ex02-using-data-types/failed-protagonist-names
 ;; * first
 ;; * rest
 ;; * empty?
+
+(def fun-list (list "a" :blep {:name "attack"}))
+(first fun-list)
+(rest fun-list)
+(empty? fun-list)
 
 ;; ========================================
 ;; Sets
@@ -243,3 +263,6 @@ training.exercises.ex02-using-data-types/failed-protagonist-names
 ;; Try this:
 ;; * Use the set/difference function
 ;; * Convert a set to a vector
+
+(set/difference #{:pizza :fries} #{:pizza :burgers})
+(into [] #{:pizza :fries})
