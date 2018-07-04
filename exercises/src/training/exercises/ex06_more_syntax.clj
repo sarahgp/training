@@ -46,6 +46,11 @@
 ;; this vector and addthem
 [0 1 2 3 4]
 
+(let [[a b] [0 1 2 3 4]] (+ a b))
+
 ;; Use destructuring to create the string "Jebediah is a butter churner"
-{:name "Jebediah"
- :occupation "butter churner"}
+(def my-map {:name "Jebediah"
+ :occupation "butter churner"})
+
+(let [{:keys [name occupation]} my-map]
+  (str name " is a " occupation))

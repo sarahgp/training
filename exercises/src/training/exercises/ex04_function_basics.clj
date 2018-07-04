@@ -45,6 +45,14 @@
 
 ;; Exercise: write a function number-max that compares two numbers and returns
 ;; the larger.
+(defn number-max
+  "Compares two numbers and returns the larger"
+  [x y]
+  (if (> x y) x y))
+
+(number-max 10 100)
+(number-max 30 -1)
+(number-max 40 40)
 
 
 
@@ -118,5 +126,3 @@
   (if (= n 6)
     sum
     (recur (inc n) (+ sum n))))
-
-

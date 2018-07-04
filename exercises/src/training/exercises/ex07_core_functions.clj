@@ -55,10 +55,22 @@
 
 ;; You try:
 ;; * Use map and filter together: first map a vector, then filter it
+(filter #(> % 10) (map inc [7 8 9 10 14]))
+
 ;; * Use reduce to select the largest number from a vector
+(def test-vec [40 400 5300 8 789])
+(reduce #(if (> %1 %2) %1 %2) test-vec)
+
 ;; * Implement map in terms of first, rest, and cons
+(defn map'
+  [func coll]
+  (if (empty? coll)
+    coll
+    (cons (func (first coll))
+          (map' func (rest coll)))))
 
-
+(map' inc [9 10 11])
+(map' inc [])
 
 ;; ========================================
 ;; Function functions
@@ -100,9 +112,20 @@
 
 ;; You try:
 ;; * Implement complement
+(defn complement'
+  [func]
+  (comp not func))
+
+(def odd? (complement' even?))
+(odd? 1)
+(odd? 2)
+
 ;; * Implement partial
 ;;  Hint: use apply
 
+(defn partial'
+  [func & args]
+  fn [later-args] (apply func (concat args later-args)))
 
 
 ;; ========================================
@@ -125,3 +148,5 @@
 
 ;; You try:
 ;; * Create a lazy sequence of all even numbers
+(def all-even (filter even? (range)))
+(take 10 all-even)
