@@ -122,6 +122,10 @@
         (map :votes
              (filter #(= 8.0 (:rating %)) mt/movies)))
 
+(->> mt/movies
+     (filter #(= 8.0 (:rating %)))
+     (map :votes)
+     (reduce +))
 
 
 ;; ========================================
