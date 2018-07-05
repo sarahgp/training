@@ -70,7 +70,7 @@ map
 ;; Let's get to know symbols!
 ;;;;
 ;; In general, Clojure resolves a symbol by:
-;; 
+;;
 ;; 1. Looking up whether the symbol names a special form. If it doesn’t . . .
 ;; 2. Looking up whether the symbol corresponds to a local binding. If it doesn’t . . .
 ;; 3. Trying to find a namespace mapping introduced by def. If it doesn’t . . .
@@ -304,6 +304,25 @@ x
   (c-int character) ;=> 10
   )
 
+(defmacro defattrs
+  [& args]
+  (let [args-map (apply hash-map args)]
+    (map
+      (fn [[symbol key]] (list 'def symbol (list 'comp key :attributes)))
+      args-map)))
+
+(macroexpand-1 '(defattrs c-int :intelligence c-str :strength))
+
+(defattrs c-int :intelligence)
+(defattrs c-str :strength)
+(defattrs
+  c-int :intelligence
+  c-str :strength
+  c-dex :dexterity)
+
+(c-int character)
+(c-str character)
+(c-dex character)
 
 ;; Bonus
 ;; `and` is a macro:
