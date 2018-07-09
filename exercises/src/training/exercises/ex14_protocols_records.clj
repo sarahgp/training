@@ -1,5 +1,7 @@
 (ns training.exercises.ex14-protocols-records
-  (:require [cheshire.core :as json]))
+  (:require [cheshire.core :as json]
+            [clojure.string :as str]
+            [clojure.java.io :as io]))
 
 ;; ========================================
 ;; Protocols
@@ -110,10 +112,43 @@
 
 ;; You try:
 ;; * create a protocol for formatting a Valeria card
+
+(defprotocol Card
+  (format-card [this] "Formats the card"))
+
 ;; * create two records, Citizen and Monster that implement that protocol
+
+(defrecord Citizen [name base-cost hit you-payout other-payout role]
+  Card
+  (format-card [this]
+    (str "Name:"         name         "\n"
+         "Base Cost:"    base-cost    "\n"
+         "Hit:"          (str/join ", " (sort hit)) "\n"
+         "You Payout:"   you-payout   "\n"
+         "Other Payout:" other-payout "\n"
+         "Role:"         role)))
+
+(defrecord Monster [name rewards hitpoints victory-points location]
+ Card
+ (format-card [this]
+   (str "Name:"           name            "\n"
+        "Base Cost:"      rewards         "\n"
+        "Hit Points:"     hitpoints      "\n"
+        "Victory Points:" victory-points  "\n"
+        "Location:"       location)))
+
 ;; * read the files under projects/valeria/resources/citizens.edn and
 ;;   monsters.edn. Convert those maps to records and format one citizen
 ;;   and one monster.
+
+(def citizens (-> "citizens.edn" io/resource slurp read-string))
+(def monsters (-> "monsters.edn" io/resource slurp read-string))
+
+(identity citizens)
+(identity monsters)
+
+(format-card (map->Citizen (first citizens)))
+(format-card (map->Monster (first monsters)))
 
 ;; The following code should work:
 (comment
@@ -123,6 +158,12 @@
                               :you-payout   [:magic 3]
                               :other-payout [:magic 1]
                               :role :holy})))
+
+(comment (format-card (map->Monster {:name "Goblin"
+                            :rewards        [:gold 1]
+                            :hitpoints      1
+                            :victory-points 1
+                            :location       "Hills"})))
 
 ;; Notes:
 ;; * You can reuse code from your previous Valeria project

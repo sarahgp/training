@@ -1,5 +1,6 @@
 (ns training.exercises.ex13-multimethods
-  (:require [hiccup.core :as h]))
+  (:require [hiccup.core :as h]
+            [clojure.set :as set]))
 
 ;; ========================================
 ;; Multimethods
@@ -57,6 +58,7 @@
 ;; Hiccup converts Clojure data structures to HTML
 (h/html [:input {:value "x"}])
 (h/html [:textarea {:value "x"}])
+(h/html [:input {:type "radio"}])
 
 (defmulti input (fn [input-type _] input-type))
 
@@ -97,7 +99,98 @@
 
 ;; You try:
 ;; * Create a method that handles radio buttons
+;; opts shape:
+;;   {:legend [str]
+;;    :checked [str, :id of checked]
+;;    :buttons [{ :id :name :display-label }]}
+(defmethod input :radio
+  [_ {:keys [buttons legend checked]}]
+    [:fieldset {:legend legend}
+      (mapv (fn [opts]
+        (let [value (:id opts)
+              display-label (:display-label opts)]
+          [:div
+            [:input (assoc opts
+                     (dissoc opts :display-label)
+                     {(:checked (= value checked))
+                      :type "radio"})]
+            [:label {:for value} display-label]]))
+            buttons)])
+
+(input :radio {:legend "Elvis Costello Songs"
+               :checked "radio-radio"
+               :buttons [{ :id "radio-radio" :name "elvis-buttons" :display-label "Radio, Radio" }
+                { :id "everyday" :name "elvis-buttons" :display-label "Everyday I Write the Book" }]})
+
 ;; * Create a method that handles check boxes
+;; opts shape:
+;;   {:legend [str]
+;;    :checked [set of :ids of checked]
+;;    :buttons [{ :id :name :display-label }]}
+(defmethod input :checkbox
+  [_ {:keys [buttons legend checked]}]
+    [:fieldset {:legend legend}
+      (mapv (fn [opts]
+        (let [value (:id opts)
+              display-label (:display-label opts)]
+          [:div
+            [:input (assoc opts
+                     (dissoc opts :display-label)
+                     {:checked (contains? checked value)
+                      :type "checkbox"})]
+            [:label {:for value} display-label]]))
+            buttons)])
+
+(input :checkbox {:legend "Elvis Costello Songs"
+               :checked #{"radio-radio" "shipbuilding"}
+               :buttons [{ :id "radio-radio" :name "elvis-buttons" :display-label "Radio, Radio" }
+                         { :id "everyday" :name "elvis-buttons" :display-label "Everyday I Write the Book" }
+                         { :id "shipbuilding" :name "elvis-buttons" :display-label "Shipbuilding"}]})
+
 ;; * Create a method that takes :date as its type, and produces
 ;;   select dropdowns for month, day, and year
+(def month-days [["January" 31]
+              ["February" 28]
+              ["March" 31]
+              ["April" 30]
+              ["May" 31]
+              ["June" 30]
+              ["July" 31]
+              ["August" 31]
+              ["September" 30]
+              ["October" 31]
+              ["November" 30]
+              ["December" 31]])
 
+(def month-map (reduce
+   (fn [coll pair] (conj coll pair))
+   {}
+   month-days))
+
+(def month-names (mapv first month-days))
+(identity month-names)
+
+(def months (map
+             (fn [a] {:name (nth month-names a) :value (inc a)})
+             (range (count month-names))))
+
+(identity months)
+
+(defn days [month] (map
+                    (fn [a] {:name a :value a})
+                    (range 1 (inc (get month-map month)))))
+(days "January")
+
+(defn years [start end] (map
+                    (fn [a] {:name a :value a})
+                    (range start (inc end))))
+
+(years 1960 2010)
+
+(defmethod input :date
+    [_ {:keys [month day year]}]
+    [:fieldset (input :select { :value month :options months})
+               (input :select { :value day :options (days month)})
+               (input :select { :value year :options (years 1999 2018)})])
+
+(input :date {:month "December" :day 30 :year 2000})

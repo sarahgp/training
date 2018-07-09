@@ -311,6 +311,14 @@ x
       (fn [[symbol key]] (list 'def symbol (list 'comp key :attributes)))
       args-map)))
 
+(defmacro defattrs
+  [& args]
+  (let [args-map (apply hash-map args)]
+    (map
+      (fn [[symbol key]] `(def ~symbol (comp ~key :attributes)))
+      args-map)))
+
+
 (macroexpand-1 '(defattrs c-int :intelligence c-str :strength))
 
 (defattrs c-int :intelligence)
