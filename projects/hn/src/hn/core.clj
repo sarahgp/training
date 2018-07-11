@@ -4,7 +4,8 @@
            [org.openqa.selenium.chrome ChromeDriver])
   (:gen-class))
 
-(def ^:dynamic *driver* nil)
+(def ^:dynamic *driver* (doto (ChromeDriver.)
+                   (.get "http://www.wikiart.org/en/paintings-by-genre")))
 
 (defn split-on-space
   [str]
@@ -34,58 +35,38 @@
                    (s/join " " )))))
     elements))
 
-(defn new-page-and-summary
+(defn pics-list
   [link]
   (binding [*driver* (doto *driver*
                      (.get link))]
-    (let [elements (.findElements *driver* (By/cssSelector ".dictionary-description-text"))
-          summary (map #(.getText %) elements)]
+    (let [elements (.findElements *driver* (By/cssSelector ".title-block .artwork-name"))
+          works (map #(s/trim (.getText %)) elements)]
+      (apply vector works))))
 
-      (println summary)
-      summary)))
-
-(defn print-genres-summaries
-  [{:keys [titles]}]
-  (println (map #(str (:name %) ": " (:number %) " artists \n" ) titles)))
+(defn print-info!
+  [{:keys [name number pics link]}]
+  (println (str name ": " number " pictures \n"
+                "Images include: " (s/join ", " pics)  "\n"
+                "More information at: " link)))
 
 (defn scrape
   []
-  (binding [*driver* (doto (ChromeDriver.)
-                     (.get "http://www.wikiart.org/en/paintings-by-genre"))]
-
-    (let [elements          (.findElements *driver* (By/cssSelector ".dictionaries-list .dottedItem a"))
-          titles-and-links  (map #(hash-map :name (.getText %)
-                                            :link (.getAttribute % "href" ))
-                                            elements)
-          formatted-elements (format-names-count titles-and-links)
-          elements-with-summaries (map
-                                   #(assoc % :summary (new-page-and-summary (:link %)))
-                                   formatted-elements)
-
-          titles (map #(.getText %) elements)
-          links-to-genre (map #(.getAttribute % "href" ) elements)
-          ]
-
-      ;; basic element
-      ;; create map with formatted name and number and link
-      ;; assoc summary with map
-      ;; print everything
-
-      (println elements-with-summaries)
-      ;(new-page-and-summary driver (first links-to-genre))
-      ;(print-genres-summaries {:titles (format-names-count titles)})
+    (let [elements                (.findElements *driver* (By/cssSelector ".dictionaries-list .dottedItem a"))
+          titles-and-links        (map #(hash-map :name (.getText %)
+                                                  :link (.getAttribute % "href" ))
+                                                  elements)
+          formatted-elements      (format-names-count titles-and-links)
+          elements-with-pics (map
+                                   #(assoc % :pics (pics-list (:link %)))
+                                   (take 1 formatted-elements))]
 
 
-      )
+
+      (doall (map print-info! elements-with-pics)))
 
     ;; closes the browser
-    (.quit driver)))
+    (.quit *driver*))
 
 (defn -main
   [& args]
   (scrape))
-
-
-;; Genre: XX artists
-;; Paragraph about Genre -> replace with featured paintings
-;; Artists Include:
