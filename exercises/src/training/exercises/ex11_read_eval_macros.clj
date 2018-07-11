@@ -292,6 +292,12 @@ x
   (def c-str (comp :strength :attributes))
   (def c-dex (comp :dexterity :attributes)))
 
+(def character
+  {:name "Smooches McCutes"
+   :attributes {:intelligence 10
+                :strength 4
+                :dexterity 5}})
+
 ;; write a macro, defattrs, which lets you define c-int, c-str, c-dex
 ;; more succinctly, like this:
 
@@ -304,7 +310,7 @@ x
   (c-int character) ;=> 10
   )
 
-(defmacro defattrs
+#_(defmacro defattrs
   [& args]
   (let [args-map (apply hash-map args)]
     (map
@@ -321,16 +327,16 @@ x
 
 (macroexpand-1 '(defattrs c-int :intelligence c-str :strength))
 
-(defattrs c-int :intelligence)
-(defattrs c-str :strength)
-(defattrs
+;(defattrs c-int :intelligence)
+;(defattrs c-str :strength)
+#_(defattrs
   c-int :intelligence
   c-str :strength
   c-dex :dexterity)
 
-(c-int character)
-(c-str character)
-(c-dex character)
+;(c-int character)
+;(c-str character)
+;(c-dex character)
 
 ;; Bonus
 ;; `and` is a macro:

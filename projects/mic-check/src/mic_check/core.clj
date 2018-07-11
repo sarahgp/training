@@ -3,4 +3,4 @@
 
 (defn -main
   [& args]
-  (println "Testing... testing..."))
+  (println "Is this thing on?"))

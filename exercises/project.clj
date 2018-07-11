@@ -3,6 +3,7 @@
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
+  :repl-options {:init-ns training.core}
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.seleniumhq.selenium/selenium-java "2.53.0"]
                  [org.seleniumhq.selenium/htmlunit-driver "2.21"]

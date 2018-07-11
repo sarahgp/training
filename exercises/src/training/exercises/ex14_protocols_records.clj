@@ -169,3 +169,4 @@
 ;; * You can reuse code from your previous Valeria project
 ;; * Theres an implementation under projects/valeria/src/valeria/cards.clj
 ;;   but there's definitely room for improvement :)
+(bumber (dragon (a-string)))
