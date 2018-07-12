@@ -61,8 +61,8 @@
                                    (take 1 formatted-elements))]
 
 
-
-      (doall (map print-info! elements-with-pics)))
+      (doall (map print-info! elements-with-pics))
+      (spit "pics.edn" (pr-str elements-with-pics)))
 
     ;; closes the browser
     (.quit *driver*))
