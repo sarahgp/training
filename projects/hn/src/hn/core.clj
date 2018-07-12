@@ -40,7 +40,7 @@
   (binding [*driver* (doto *driver*
                      (.get link))]
     (let [elements (.findElements *driver* (By/cssSelector ".title-block .artwork-name"))
-          works (map #(s/trim (.getText %)) elements)]
+          works (filter (complement s/blank?) (map #(s/trim (.getText %)) elements))]
       (apply vector works))))
 
 (defn print-info!
